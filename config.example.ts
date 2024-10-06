@@ -1,19 +1,6 @@
 // RENAME THIS FILE TO config.ts
 
-interface IConfig {
-  whoami: string;
-  interval: number;
-  timeout: number;
-  offlineThreshold: number;
-  nodes: INode[];
-  logFolder: string;
-}
-
-interface INode {
-  name: string;
-  ip: string;
-  port: number;
-}
+import type IConfig from "./interfaces/config";
 
 let config: IConfig = {
   whoami: "node1", // name of the node
