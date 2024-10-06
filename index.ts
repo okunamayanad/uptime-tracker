@@ -1,5 +1,50 @@
 import { isIPInRangeOrPrivate } from "range_check";
 import config from "./config.ts";
+import fs from "fs";
+import pkg from "./package.json";
+
+if (!fs.existsSync(config.logFolder)) {
+  fs.mkdirSync(config.logFolder);
+}
+
+let calculateLogName = () => {
+  return `${config.logFolder}/${new Date().toISOString().split("T")[0]}-${
+    config.whoami
+  }.log`;
+};
+
+let logStream = fs.createWriteStream(calculateLogName(), {
+  flags: "a", // 'a' means appending (old data will be preserved)
+});
+initLogMessage(logStream);
+
+function initLogMessage(logStream: fs.WriteStream) {
+  let nodeInfo = config.nodes
+    .map((node) => `${node.name}:${node.ip}:${node.port}`)
+    .join("!");
+
+  logStream.write(
+    `---\n${pkg.logVersion}|${new Date().toISOString()}|${
+      config.whoami
+    }|${nodeInfo}\n`
+  );
+}
+
+function writeNodeLog(
+  logStream: fs.WriteStream,
+  nodeName: string,
+  timeouts: number
+) {
+  logStream.write(`${new Date().toISOString()}|${nodeName}|${timeouts}\n`);
+}
+
+function resetLogStream() {
+  logStream.end();
+  logStream = fs.createWriteStream(calculateLogName(), {
+    flags: "a", // 'a' means appending (old data will be preserved)
+  });
+  initLogMessage(logStream);
+}
 
 interface NodeStatus {
   timeouts: number;
@@ -60,6 +105,8 @@ setInterval(async () => {
     } finally {
       clearTimeout(nodeTimeoutTimer);
     }
+
+    writeNodeLog(logStream, node.name, nodeStatus[node.name].timeouts);
   }
 
   console.table(nodeStatus);
