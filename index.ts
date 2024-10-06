@@ -70,12 +70,11 @@ function handleTimeout(node: string) {
   nodeStatus[node].timeouts += 1;
 
   if (nodeStatus[node].timeouts >= config.offlineThreshold) {
-    nodeStatus[node].online = false;
     if (nodeStatus[node].online) {
       console.error(`Node ${node} marked as offline`);
-      writeNodeLog(logStream, node, nodeStatus[node].online);
+      writeNodeLog(logStream, node, false);
     }
-
+    nodeStatus[node].online = false;
     console.log("Nodes status:");
   }
 }
@@ -103,7 +102,7 @@ setInterval(async () => {
       console.log(`Successfully pinged ${node.name}`);
       if (!nodeStatus[node.name].online) {
         console.log(`Node ${node.name} marked as online`);
-        writeNodeLog(logStream, node.name, nodeStatus[node.name].online);
+        writeNodeLog(logStream, node.name, true);
       }
       nodeStatus[node.name].timeouts = 0;
       nodeStatus[node.name].online = true;
