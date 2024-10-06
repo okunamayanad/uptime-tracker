@@ -1,10 +1,11 @@
 import { isIPInRangeOrPrivate } from "range_check";
 import config from "./config.ts";
 import fs from "fs";
+import path from "path";
 import pkg from "./package.json";
 
-if (!fs.existsSync(config.logFolder)) {
-  fs.mkdirSync(config.logFolder);
+if (!fs.existsSync(path.resolve(__dirname, config.logFolder))) {
+  fs.mkdirSync(path.resolve(__dirname, config.logFolder));
 }
 
 let calculateLogName = () => {
@@ -13,9 +14,12 @@ let calculateLogName = () => {
   }.log`;
 };
 
-let logStream = fs.createWriteStream(calculateLogName(), {
-  flags: "a", // 'a' means appending (old data will be preserved)
-});
+let logStream = fs.createWriteStream(
+  path.resolve(__dirname, calculateLogName()),
+  {
+    flags: "a", // 'a' means appending (old data will be preserved)
+  }
+);
 initLogMessage(logStream);
 
 function initLogMessage(logStream: fs.WriteStream) {
@@ -40,9 +44,12 @@ function writeNodeLog(
 
 function resetLogStream() {
   logStream.end();
-  logStream = fs.createWriteStream(calculateLogName(), {
-    flags: "a", // 'a' means appending (old data will be preserved)
-  });
+  logStream = fs.createWriteStream(
+    path.resolve(__dirname, calculateLogName()),
+    {
+      flags: "a", // 'a' means appending (old data will be preserved)
+    }
+  );
   initLogMessage(logStream);
 }
 
