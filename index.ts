@@ -12,6 +12,17 @@ for (const node of config.nodes) {
   nodeStatus[node.name] = { timeouts: 0, online: true };
 }
 
+function handleTimeout(node: string) {
+  nodeStatus[node].timeouts += 1;
+
+  if (nodeStatus[node].timeouts >= config.offlineThreshold) {
+    nodeStatus[node].online = false;
+    console.error(`Node ${node} marked as offline`);
+
+    console.log("Nodes status:");
+  }
+}
+
 setInterval(async () => {
   for (const node of config.nodes) {
     if (node.name === config.whoami) {
@@ -22,19 +33,10 @@ setInterval(async () => {
 
     const controller = new AbortController();
     const nodeTimeoutTimer = setTimeout(() => {
-      // Timeout logic
       console.error(`Request to ${node.name} timed out`);
       controller.abort();
 
-      nodeStatus[node.name].timeouts += 1;
-
-      if (nodeStatus[node.name].timeouts >= 5) {
-        nodeStatus[node.name].online = false;
-        console.error(`Node ${node.name} marked as offline`);
-
-        console.log("Nodes status:");
-        console.table(nodeStatus);
-      }
+      handleTimeout(node.name);
     }, config.timeout);
 
     try {
@@ -53,10 +55,14 @@ setInterval(async () => {
       }
 
       console.error(`Error pinging ${node.name}: ${err}`);
+
+      handleTimeout(node.name);
     } finally {
       clearTimeout(nodeTimeoutTimer);
     }
   }
+
+  console.table(nodeStatus);
 }, config.interval);
 
 Bun.serve({
