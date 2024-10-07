@@ -102,6 +102,8 @@ setInterval(async () => {
       console.log(`Successfully pinged ${node.name}`);
       if (!nodeStatus[node.name].online) {
         console.log(`Node ${node.name} marked as online`);
+      }
+      if (nodeStatus[node.name].timeouts !== 0) {
         writeNodeLog(logStream, node.name, 0);
       }
       nodeStatus[node.name].timeouts = 0;
