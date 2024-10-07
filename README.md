@@ -16,17 +16,17 @@ Copy the `config.example.ts` file to `config.ts` and modify the configuration as
 
 ### Running
 
-To run the program you (**TODO:**) ~~can download the release from the releases page~~  or build it yourself.
+To run the program you (**TODO:**) [can download the release from the releases page or build it yourself.](https://github.com/okunamayanad/uptime-tracker/issues/5)
 
-**TODO:** ~~The releases also contain a LXC template and a Dockerfile to run the program in a container.~~
+**TODO:** [The releases also contain a LXC template and a Dockerfile to run the program in a container.](https://github.com/okunamayanad/uptime-tracker/issues/5)
 
 ### Viewing logs
 
 The logs are stored in the `logs` directory. Each log file is named `<YYYY-MM-DD>-<NODE_NAME>.log`. The logs are in a simple text format and can be viewed with any text editor.
 
-**TODO:** ~~You can also use  to view the logs.~~
+**TODO:** [You can also use uptime-viewer to view the logs.](https://github.com/users/okunamayanad/projects/6/views/3?pane=issue&itemId=82487574)
 
-## Building and running
+## Development and running
 
 To build the program you will need to have [Node](https://nodejs.org/) and [Bun](https://bun.sh/) installed.
 
@@ -40,6 +40,12 @@ To run:
 
 ```bash
 bun run index.ts
+```
+
+You can also use `--watch` to automatically restart the program when a file changes:
+
+```bash
+bun run --watch index.ts
 ```
 
 # About logs
