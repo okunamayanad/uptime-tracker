@@ -52,18 +52,21 @@ bun run index.ts
 
 ### Log format:
 
+`<>` means a variable in the config and `|` is a seperator **not** OR
+
 `---` means restart logging
 
 after restart, the first line is information about current configuration
 
-`<version>|<ISO8601>|<current node name>|` and then every node in the network in the format `<node name>:<node ip>: <node port>` with nodes seperated by `!`
+`<version>|<ISO8601>|<offlineThreshold>|<current node name>|` and then every node in the network in the format `<node name>:<node ip>: <node port>` with nodes seperated by `!`
 
 after initialization, a new line is added when a node changes state
 
-`<ISO8601>|<node name>|<state>` where state is either `1` for up or `0` for down
+`<ISO8601>|<node name>|<timeouts>` where `<timeouts>` is the number of timeouts the node has had (ranging from 0 to `<offlineThreshold>`)
 
-the current log version is `0.0.2`
+the current log version is `0.0.3`
 
 ### Older versions:
 
+[`0.0.2`](https://github.com/okunamayanad/uptime-tracker/blob/0f704bf4ddece3952a1084d3bafa2834b1ddda8f/README.md)
 [`0.0.1`](https://github.com/okunamayanad/uptime-tracker/blob/614269a4c60c47d7c52a686c05f806507c5e91af/README.md)
