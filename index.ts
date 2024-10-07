@@ -29,19 +29,17 @@ function initLogMessage(logStream: fs.WriteStream) {
 
   logStream.write(
     `---\n${pkg.logVersion}|${new Date().toISOString()}|${
-      config.whoami
-    }|${nodeInfo}\n`
+      config.offlineThreshold
+    }|${config.whoami}|${nodeInfo}\n`
   );
 }
 
 function writeNodeLog(
   logStream: fs.WriteStream,
   nodeName: string,
-  state: boolean
+  timeouts: number
 ) {
-  logStream.write(
-    `${new Date().toISOString()}|${nodeName}|${state ? "1" : "0"}\n`
-  );
+  logStream.write(`${new Date().toISOString()}|${nodeName}|${timeouts}\n`);
 }
 
 function resetLogStream() {
@@ -72,10 +70,12 @@ function handleTimeout(node: string) {
   if (nodeStatus[node].timeouts >= config.offlineThreshold) {
     if (nodeStatus[node].online) {
       console.error(`Node ${node} marked as offline`);
-      writeNodeLog(logStream, node, false);
+      writeNodeLog(logStream, node, config.offlineThreshold);
     }
     nodeStatus[node].online = false;
     console.log("Nodes status:");
+  } else {
+    writeNodeLog(logStream, node, nodeStatus[node].timeouts);
   }
 }
 
@@ -102,7 +102,9 @@ setInterval(async () => {
       console.log(`Successfully pinged ${node.name}`);
       if (!nodeStatus[node.name].online) {
         console.log(`Node ${node.name} marked as online`);
-        writeNodeLog(logStream, node.name, true);
+      }
+      if (nodeStatus[node.name].timeouts !== 0) {
+        writeNodeLog(logStream, node.name, 0);
       }
       nodeStatus[node.name].timeouts = 0;
       nodeStatus[node.name].online = true;
